@@ -16,6 +16,8 @@ contract WavePortal {
     }
     
     Wave[] waves;
+    // create mapping between address and int (blocktime)
+    mapping(address => uint256) public lastWavedAt;
 
     constructor() payable {
         console.log("Wassa Wassa Wassaaaap");
@@ -24,6 +26,13 @@ contract WavePortal {
     }
 
     function wave(string memory _message) public {
+        // require cool down period
+        require(
+            lastWavedAt[msg.sender] + 15 minutes < block.timestamp,
+            "Wait 15m"
+        );
+        // update latest blocktime at whic msg.sender called the contract
+        lastWavedAt[msg.sender] = block.timestamp;
         // generate wave & emit event
         totalWaves += 1;
         waves.push(Wave(msg.sender, _message, block.timestamp));      
